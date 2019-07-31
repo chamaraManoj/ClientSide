@@ -22,7 +22,11 @@ public class MainActivity extends AppCompatActivity {
     private static String ip = "10.130.1.229";
 
     Button sendButton;
-    private byte[] receiveBuffer;
+    private byte[] receiveBuffer1;
+    private byte[] receiveBuffer2;
+    private byte[] receiveBuffer3;
+    private byte[] receiveBuffer4;
+
     private static int frameID;
 
     @Override
@@ -42,7 +46,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void sendMessage() {
-        Client myClient = new Client(receiveBuffer, frameID);
+        Client myClient = new Client();
         myClient.execute();
     }
 
@@ -56,33 +60,40 @@ public class MainActivity extends AppCompatActivity {
         byte[] receiverBuffer;
         int frameID;
 
-        public Client(byte[] receiverBuffer, int frameID) {
-            this.receiverBuffer = receiverBuffer;
-            this.frameID = frameID;
+        public Client() {
+            //this.receiverBuffer = receiverBuffer;
+            //this.frameID = frameID;
         }
 
         @Override
         protected Void doInBackground(Void... arg0) {
-            //Log.d("Debug", "2");
+            Log.d("Debug", "2");
             int BUFFER_LENGTH = 9;
-            //Log.d("Debug", "3");
+            Log.d("Debug", "3");
             Socket socket1 = null;
             Socket socket2 = null;
+            Socket socket3 = null;
+            Socket socket4 = null;
+            Socket socket5 = null;
+
             try {
-                /*Log.d("Debug", "4");
-                Log.d("Debug", "5");*/
+                Log.d("Debug", "4");
+                Log.d("Debug", "5");
                 byte[] sendBuffer = new byte[BUFFER_LENGTH];
                 //Log.d("Debug", "6");
-                for (int frame = 0; frame < 100; frame++) {
+                for (int frame = 0; frame < 1; frame++) {
                     byte tile1 = 1;
                     byte tile2 = 3;
                     byte tile3 = 5;
                     byte tile4 = 6;
                     frameID = frame;
-                    Log.d("Debug",String.valueOf(frameID));
+                    Log.d("Debug", String.valueOf(frameID));
                     byte quality = 1;
                     socket1 = new Socket(ip, 5550);
-                    socket2 = new Socket(ip,5551 );
+                    socket2 = new Socket(ip, 5551);
+                    socket3 = new Socket(ip, 5552);
+                    socket4 = new Socket(ip, 5553);
+                    socket5 = new Socket(ip, 5554);
                     //Log.d("Debug", "7");
                     byte[] bytes = ByteBuffer.allocate(4).putInt(frameID).array();
                     sendBuffer[0] = bytes[0];
@@ -112,10 +123,21 @@ public class MainActivity extends AppCompatActivity {
                         os.flush();
                         socket1.shutdownOutput();
 
-                        ReceivedBufferUpdateTask receivedBufferUpdateTask = new ReceivedBufferUpdateTask(receiverBuffer);
+                        ReceivedBufferUpdateTask receivedBufferUpdateTask1 = new ReceivedBufferUpdateTask(receiveBuffer1);
+                        /*ReceivedBufferUpdateTask receivedBufferUpdateTask2 = new ReceivedBufferUpdateTask(receiveBuffer2);
+                        ReceivedBufferUpdateTask receivedBufferUpdateTask3 = new ReceivedBufferUpdateTask(receiveBuffer3);
+                        ReceivedBufferUpdateTask receivedBufferUpdateTask4 = new ReceivedBufferUpdateTask(receiveBuffer4);*/
 
-                        SocektReceiveFile socektReceiveFile = new SocektReceiveFile(socket2,receivedBufferUpdateTask);
-                        ModuleManager.getDownloadManager().runDownloadFile(socektReceiveFile);
+
+                        SocektReceiveFile socketReceiveFile1 = new SocektReceiveFile(socket2, receivedBufferUpdateTask1,1);
+                       /*SocektReceiveFile socektReceiveFile2 = new SocektReceiveFile(socket3, receivedBufferUpdateTask2,2);
+                        SocektReceiveFile socektReceiveFile3 = new SocektReceiveFile(socket4, receivedBufferUpdateTask3,3);
+                        SocektReceiveFile socektReceiveFile4 = new SocektReceiveFile(socket5, receivedBufferUpdateTask4,4);*/
+
+                        ModuleManager.getDownloadManager().runDownloadFile(socketReceiveFile1);
+                        /*ModuleManager.getDownloadManager().runDownloadFile(socektReceiveFile2);
+                        ModuleManager.getDownloadManager().runDownloadFile(socektReceiveFile3);
+                        ModuleManager.getDownloadManager().runDownloadFile(socektReceiveFile4);*/
 
 
                     } catch (IOException e) {

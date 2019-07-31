@@ -11,11 +11,13 @@ public class SocektReceiveFile implements Runnable {
 
     private Socket socket;
     byte[] imageFrame;
+    int threadNum;
     ReceivedBufferUpdateTask  updateResults;
 
-    public SocektReceiveFile(Socket socket, ReceivedBufferUpdateTask updateMainThreadBuffer){
+    public SocektReceiveFile(Socket socket, ReceivedBufferUpdateTask updateMainThreadBuffer, int threadNum){
         this.socket = socket;
         this.updateResults = updateMainThreadBuffer;
+        this.threadNum = threadNum;
         ModuleManager.getDownloadManager().getMainThreadExecutor().execute(updateResults);
     }
 
@@ -23,8 +25,6 @@ public class SocektReceiveFile implements Runnable {
     public void run() {
         getFIle();
         updateResults.setBackgroundMsg(imageFrame);
-
-
     }
 
     public boolean getFIle(){
@@ -35,23 +35,24 @@ public class SocektReceiveFile implements Runnable {
             //Log.d("Debug", "1");
             do {
                 try {
-                    //Log.d("Debug", "2");
+                    Log.d("Debug", "in Thread"+ String.valueOf(threadNum));
                     InputStream inputStream = socket.getInputStream();
                     BufferedInputStream bufferedInputStream = new BufferedInputStream(inputStream);
                     //bytesAvailable = inputStream.available();
-
+                    Log.d("Debug", "in Thread"+ String.valueOf(threadNum)+ " 1");
                     //if (bytesAvailable > 0) {
                     int current;
                     //bytesRead = inputStream.read(imageFrame, 0, imageFrame.length);
                     bytesRead = bufferedInputStream.read(imageFrame, 0, imageFrame.length);
                     current = 0;
-                    //Log.d("Debug", String.valueOf(bytesRead));
+                    Log.d("Debug", "in Thread"+ String.valueOf(threadNum)+ " 2");
+                    Log.d("Debug", String.valueOf(bytesRead));
                     current = bytesRead;
 
                     do {
                         bytesRead = bufferedInputStream.read(imageFrame, current, (imageFrame.length - current));
                         if (bytesRead >= 0) current += bytesRead;
-                        //Log.d("Debug", String.valueOf(bytesRead));
+                        Log.d("Debug", String.valueOf(bytesRead));
                     } while (bytesRead > 0);
 
                     Log.d("Debug", "Reply Byte " + current + "\n");
